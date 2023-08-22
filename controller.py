@@ -10,10 +10,11 @@ def phone_book():
     if interaction_info[0] == '2':
         create_info.create_data(interaction_info[1])
     if interaction_info[0] == '3':
-        pass
+        model.edit_row()
     if interaction_info[0] == '4':
         model.ask_for_key()
 
 
+create_info.create_book()
 while True:
     phone_book()
