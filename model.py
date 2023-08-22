@@ -17,15 +17,51 @@ def display_data():
             print('Записей больше нет')
 
 
-def find_row():
-    key = input('Выберите поле, по которому хотите совершить поиск ("ФИО", "название организации", "рабочий телефон", "сотовый телефон")')
-    while key not in ("ФИО", "название организации", "рабочий телефон", "сотовый телефон"):
-        print('Введите корректное название ("ФИО", "название организации", "рабочий телефон", "сотовый телефон")')
-    value = input('введите данные записи, которую хотите найти')
+def get_keys_from_input():
+    key = input()
+    keys, values = [], []
+    if ';' not in key:
+        key, value = key.split(': ')
+        keys.append(key)
+        values.append(value)
+    else:
+        for items in key.split('; '):
+            key, value = items.split(': ')
+            keys.append(key)
+            values.append(value)
+    return keys, values
+
+
+def are_keys_valid(keys):
+    for key in keys:
+        if key not in ("ФИО", "название организации", "рабочий телефон", "сотовый телефон"):
+            return False
+    return True
+
+
+def find_rows(keys, values):
     with open('client_data.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter=',')
         ans = []
         for row in reader:
-            if row[key] == value:
-                ans.append(f"'ФИО': {row['ФИО']}, 'название организации': {row['название организации']}, 'рабочий телефон': {row['рабочий телефон']}, 'сотовый телефон': {row['сотовый телефон']}")
-        print(*ans if ans else 'По вашему запросу ничего не найдено', sep='\n')
+            all_match = []
+            for idx in range(len(keys)):
+                all_match.append(row[keys[idx]] == values[idx])
+            if all(all_match):
+                ans.append(row)
+        return ans
+
+
+def ask_for_key():
+    keys, values = get_keys_from_input()
+    while not are_keys_valid(keys):
+        print('Проверьте корректность полей введенных данных и введите их снова ("ФИО", "название организации", "рабочий телефон", "сотовый телефон")')
+        keys, values = get_keys_from_input()
+    ans = [f"'ФИО': {row['ФИО']}, 'название организации': {row['название организации']}, 'рабочий телефон': {row['рабочий телефон']}, 'сотовый телефон': {row['сотовый телефон']}" for row in find_rows(keys, values)]
+    if ans:
+        print(*ans, sep='\n')
+    else:
+        print('По вашему запросу ничего не найдено')
+
+
+

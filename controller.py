@@ -12,7 +12,7 @@ def phone_book():
     if interaction_info[0] == '3':
         pass
     if interaction_info[0] == '4':
-        model.find_row()
+        model.ask_for_key()
 
 
 while True:

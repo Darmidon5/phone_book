@@ -1,5 +1,15 @@
 import csv
 import os
+from operator import itemgetter
+import faker
+
+
+def sort_book(filename):
+    reader = csv.reader(open(filename), delimiter=",")
+    sortedlist = sorted(reader, key=itemgetter(0), reverse=True)
+    writer = csv.writer(open(filename, mode='w'), delimiter=',')
+    [writer.writerow(i) for i in sortedlist]
+    return sortedlist
 
 
 def is_book_exists():
@@ -19,8 +29,12 @@ def create_data(row):
             row = row.split(', ')
             writer.writerow(row)
             ans = input('Хотите добавить еще одну запись ("+" - Да, "-" - нет)')
+        sort_book('client_data.csv')
 
 
-
-
-print(os.path.dirname(os.path.realpath(__file__)))
+with open('client_data.csv', mode='a', encoding='utf-8') as file:
+    writer = csv.writer(file, delimiter=',')
+    writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
+    fake = faker.Faker('ru_Ru')
+    for _ in range(100):
+        writer.writerow([fake.name(), fake.company(), fake.phone_number(), fake.phone_number()])
