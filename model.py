@@ -1,6 +1,7 @@
 import csv
 from operator import itemgetter
 
+
 def display_data():
     with open('client_data.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter=',')

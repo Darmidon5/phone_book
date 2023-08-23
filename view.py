@@ -1,6 +1,7 @@
 
 
 def interaction():
+    '''request a comand from the user by asking him questions'''
     action = input('''Введите команду:
 1 - вывод следующей страницы справочника
 2 - добавить новую запись в справочник
@@ -12,7 +13,7 @@ def interaction():
         return action
 
     if action == '2':
-        text_input = input('Введите через запятую ФИО, название организации, рабочий телефон и сотовый телефон абонента')
+        text_input = input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";"')
         return action, text_input
 
     if action == '3':
