@@ -3,7 +3,7 @@ import create_info
 import model
 
 
-def phone_book():
+def phone_book() -> None:
     '''request a command from the user and call the function necessary to execute it'''
     filename = 'client_data.csv'
 

@@ -2,7 +2,7 @@ import csv
 from operator import itemgetter
 
 
-def display_data():
+def display_data() -> None:
     '''outputs the first 10 records from the 'client_data.csv' file, and requests the output of the next 10. if there are not enough records, informs the user about it and stops working'''
     with open('client_data.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter=',')
@@ -19,7 +19,7 @@ def display_data():
             print('Записей больше нет')
 
 
-def get_keys_from_input():
+def get_keys_from_input() -> tuple:
     '''accepts a string containing key-value pairs separated by a colon. if there are several pairs, they should be separated by a ';' sign. returns a list of keys and a list of values'''
     key = input()
     keys, values = [], []
@@ -35,7 +35,7 @@ def get_keys_from_input():
     return keys, values
 
 
-def are_keys_valid(keys):
+def are_keys_valid(keys: list) -> bool:
     '''accepts a list of keys and checks them against the contained list of headers of the csv file 'client_data.csv'. returns False if it finds a mismatch'''
     for key in keys:
         if key not in ("ФИО", "название организации", "рабочий телефон", "сотовый телефон"):
@@ -43,7 +43,7 @@ def are_keys_valid(keys):
     return True
 
 
-def asking_for_valid_keys():
+def asking_for_valid_keys() -> tuple:
     '''contains a function that returns lists of keys and values from the input. requests re-entry if there is an error in the keys'''
     keys, values = get_keys_from_input()
     while not are_keys_valid(keys):
@@ -52,7 +52,7 @@ def asking_for_valid_keys():
     return keys, values
 
 
-def find_rows(keys, values):
+def find_rows(keys: list, values: list) -> list:
     '''accepts a list of keys and a list of values and returns all the corresponding strings from the 'client_data.csv' file'''
     with open('client_data.csv', 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter=',')
@@ -66,7 +66,7 @@ def find_rows(keys, values):
         return ans
 
 
-def ask_for_key():
+def ask_for_key() -> None:
     '''requests a string containing key-value pairs from the user. divides it into a list of keys and a list of values, checks their correctness and searches for the corresponding record. If records are found, it outputs them. otherwise, notifies the user about the absence of relevant records'''
     keys, values = asking_for_valid_keys()
     ans = [f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, рабочий телефон: {row['рабочий телефон']}, сотовый телефон: {row['сотовый телефон']}" for row in find_rows(keys, values)]
@@ -76,7 +76,7 @@ def ask_for_key():
         print('По вашему запросу ничего не найдено')
 
 
-def edit_row():
+def edit_row() -> None:
     '''accepts an entry, finds it in the 'client_data.csv' file and overwrites it to the line that the user enters. after that, it sorts the file.'''
     keys, values = asking_for_valid_keys()
     ans = find_rows(keys, values)
