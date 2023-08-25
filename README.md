@@ -12,7 +12,10 @@
 ## Установка
 1. скопировать репозиторий командой git clone https://github.com/Darmidon5/phone_book.git
 2. активировать виртуальную машину
-3. запустить файл controller.py
+3. установить зависимости командой pip install -r requirements.txt
+4. запустить файл controller.py
+
+запустив файл creating_fake_data.py вы сможете заполнить телефонную книгу любым количеством случайно сгенерированных данных
 
 ## Контактная информация:
 niks_remez2@mail.ru
