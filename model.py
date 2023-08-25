@@ -6,7 +6,7 @@ def display_data() -> None:
     """outputs the first 10 records from the 'client_data.csv' file, and requests the output of the next 10.
 if there are not enough records, informs the user about it and stops working"""
     with open('client_data.csv', 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file, delimiter=',')
+        reader = csv.DictReader(file, delimiter=';')
         counter = 0
         for row in reader:
             counter += 1
@@ -67,7 +67,7 @@ def find_rows(keys: list, values: list) -> list:
     """accepts a list of keys and a list of values and
 returns all the corresponding strings from the 'client_data.csv' file"""
     with open('client_data.csv', 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file, delimiter=',')
+        reader = csv.DictReader(file, delimiter=';')
         ans = []
         for row in reader:
             all_match = []
@@ -96,21 +96,19 @@ after that, it sorts the file."""
     keys, values = asking_for_valid_keys()
     ans = find_rows(keys, values)
 
-    reader = csv.reader(open('client_data.csv'), delimiter=",")
+    reader = csv.reader(open('client_data.csv'), delimiter=";")
     rows_list = list(reader)
     if not ans:
         print('По вашему запросу ничего не найдено')
-        return False
+        return None
     rows_list.remove([*ans[0].values()])
 
     row = input('Пожалуйста, введите измененные данные')
-    print(row)
     row = [items.split(': ')[1] for items in row.split('; ')]
-    print(row)
     rows_list.append(row)
     sortedlist = sorted(rows_list, key=itemgetter(0))
     sortedlist.remove(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
 
-    writer = csv.writer(open('client_data.csv', mode='w'), delimiter=',')
+    writer = csv.writer(open('client_data.csv', mode='w'), delimiter=';')
     writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
     [writer.writerow(i) for i in sortedlist]

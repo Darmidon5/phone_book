@@ -19,5 +19,8 @@ def phone_book() -> None:
 
 if __name__ == '__main__':
     create_info.create_book()
-    while True:
-        phone_book()
+    try:
+        while True:
+            phone_book()
+    except KeyboardInterrupt:
+        print('Спасибо, что выбрали нас!')

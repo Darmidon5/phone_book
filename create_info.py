@@ -8,7 +8,7 @@ def sort_csv_file_by_column() -> None:
     column_number - the number of the column to sort by,
     headers - headers of the csv file"""
     reader = csv.reader(open('client_data.csv', encoding='utf-8'), delimiter=";")
-    sortedlist = sorted(reader, key=lambda row: row[0], reverse=True)
+    sortedlist = sorted(reader, key=lambda row: row[0])
     sortedlist.remove(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
     writer = csv.writer(open('client_data.csv', mode='w', encoding='utf-8'), delimiter=';')
     writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
@@ -45,4 +45,4 @@ def create_data(row: str) -> None:
             if ans == '-':
                 break
             row = input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";"')
-        sort_csv_file_by_column()
+    sort_csv_file_by_column()
