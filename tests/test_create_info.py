@@ -1,4 +1,4 @@
-from create_info import is_book_exists, create_book, sort_csv_file_by_column, create_data
+from create_info import is_book_exists, create_book, sort_csv_file_by_column, add_row_to_file
 from test_creating_fake_data import is_file_exists
 import csv
 import os
@@ -7,7 +7,6 @@ from random import shuffle
 
 
 test_filename = 'test_client_data.csv'
-sorting_test_filename = 'test_csv'
 
 
 def test_is_book_exists() -> None:
@@ -27,7 +26,7 @@ def test_create_book() -> None:
 
 
 def create_messed_csv() -> None:
-    with open(sorting_test_filename, 'w', encoding='utf-8') as file:
+    with open(test_filename, 'w', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
         random_letters: list = [i for i in ascii_lowercase]
@@ -41,8 +40,8 @@ def test_sort_csv_file_by_column() -> None:
 
     sorted_rows = open('sorted_csv', 'r', encoding='utf-8').readlines()
 
-    sort_csv_file_by_column(sorting_test_filename)
-    test_reader = open(sorting_test_filename, 'r', encoding='utf-8').readlines()
+    sort_csv_file_by_column(test_filename)
+    test_reader = open(test_filename, 'r', encoding='utf-8').readlines()
 
     counter = 0
     all_match = []
@@ -51,5 +50,18 @@ def test_sort_csv_file_by_column() -> None:
         counter += 1
     assert all(all_match)
 
-    os.remove(sorting_test_filename)
-    assert not is_file_exists(sorting_test_filename)
+    os.remove(test_filename)
+    assert not is_file_exists(test_filename)
+
+
+def test_add_row_to_file() -> None:
+    file = open(test_filename, 'w', encoding='utf-8')
+    test_data: list = ['name', 'organization', 'phone1', 'phone2']
+    add_row_to_file(test_data, test_filename)
+
+    reader = csv.reader(open(test_filename), delimiter=";")
+    list_for_test = list(reader)
+
+    assert len(list_for_test) == 1
+    assert test_data in list_for_test
+    os.remove(test_filename)

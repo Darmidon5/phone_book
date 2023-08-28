@@ -7,11 +7,14 @@ def sort_csv_file_by_column(filepath: str) -> None:
     takes 3 arguments: filename - name of file in the same directory that must be sorted,
     column_number - the number of the column to sort by,
     headers - headers of the csv file"""
+    headers: list = ['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон']
     reader = csv.reader(open(filepath, encoding='utf-8'), delimiter=";")
     sortedlist = sorted(reader, key=lambda row: row[0])
-    sortedlist.remove(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
+
     writer = csv.writer(open(filepath, mode='w', encoding='utf-8'), delimiter=';')
-    writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
+    if headers in sortedlist:
+        sortedlist.remove(headers)
+        writer.writerow(headers)
     [writer.writerow(i) for i in sortedlist]
 
 
@@ -29,16 +32,9 @@ def create_book(filepath: str) -> None:
             writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
 
 
-def create_data(row: str, filepath: str) -> None:
+def add_row_to_file(row: list, filepath: str) -> None:
     """write a new row to csv file"""
     with open(filepath, mode='a', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter=';')
-        while True:
-            writer.writerow(row)
-            ans = input('Хотите добавить еще одну запись ("+" - Да, "-" - нет)')
-            while ans not in ['-', '+']:
-                ans = input('Введите "+" если хотите добавить еще одну запись, в противном случае введите "-"')
-            if ans == '-':
-                break
-            row = input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";"')
-    sort_csv_file_by_column('client_data.csv')
+        writer.writerow(row)
+    sort_csv_file_by_column(filepath)

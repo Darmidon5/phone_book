@@ -1,3 +1,4 @@
 *.csv
 .idea
 pycache
+.pytest_cashe
