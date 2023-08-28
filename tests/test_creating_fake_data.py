@@ -2,8 +2,6 @@ from creating_fake_data import create_data
 import os
 import csv
 
-test_filename = 'test_client_data.csv'
-
 
 def is_file_exists(filename: str) -> bool:
     """take filename as an argument and check if it exists in current directory"""
@@ -11,7 +9,7 @@ def is_file_exists(filename: str) -> bool:
     return os.path.exists(dir_path + f'/{filename}')
 
 
-def test_create_data() -> None:
+def test_create_data(test_filename: str) -> None:
     rows_amount_without_headers: int = 20
     create_data(rows_amount_without_headers, test_filename)
     assert is_file_exists(test_filename)

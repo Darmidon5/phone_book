@@ -19,7 +19,7 @@ def validate_row(row: str) -> list:
     return row
 
 
-def phone_book(command) -> None:
+def phone_book(command, filepath) -> None:
     """request a command from the user and call the function necessary to execute it"""
     if type(command) is str:
         if command == '1':
@@ -34,14 +34,15 @@ def phone_book(command) -> None:
         if command == '2':
             row = input_data
             valid_row = validate_row(row)
-            create_info.add_row_to_file(valid_row, 'client_data.csv')
+            create_info.add_row_to_file(valid_row, filepath)
 
 
 if __name__ == '__main__':
-    create_info.create_book('client_data.csv')
+    phone_book_name: str = 'client_data.csv'
+    create_info.create_book(phone_book_name)
     try:
         while True:
             user_command = view.interaction()
-            phone_book(user_command)
+            phone_book(user_command, phone_book_name)
     except KeyboardInterrupt:
         print('Спасибо, что выбрали нас!')
