@@ -42,7 +42,6 @@ def asking_for_valid_keys() -> tuple:
         keys, values = get_keys_from_input()
     return keys, values
 
-
 def validate_row_delimiter(row: str) -> str:
     while ';' not in row:
         row = input('пожалуйста, введите данные еще раз, разделив их знаком ";" ')
