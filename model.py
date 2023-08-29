@@ -39,35 +39,32 @@ returns all the corresponding strings from the 'client_data.csv' file"""
         return ans
 
 
-def ask_for_key(data_to_search: tuple) -> list:
-
+def correct_finding_output(data_to_search: tuple, filepath: str) -> list:
     keys, values = data_to_search
-    ans = [f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, рабочий телефон: {row['рабочий телефон']}, сотовый телефон: {row['сотовый телефон']}" for row in find_rows(keys, values, 'client_data.csv')]
+    ans = [f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, рабочий телефон: {row['рабочий телефон']}, сотовый телефон: {row['сотовый телефон']}" for row in find_rows(keys, values, filepath)]
     if not ans:
         return ['По вашему запросу ничего не найдено']
     else:
         return ans
 
 
-def edit_row(data_to_search: tuple) -> None:
+def edit_row(data_to_search: tuple, new_data: list, filename: str) -> str:
     """accepts a row, finds it in the 'client_data.csv' file and overwrites it to the row that the user enters.
 after that, it sorts the file."""
     keys, values = data_to_search
-    ans = find_rows(keys, values, 'client_data.csv')
-
-    reader = csv.reader(open('client_data.csv'), delimiter=";")
-    rows_list = list(reader)
+    ans = find_rows(keys, values, filename)
     if not ans:
-        print('По вашему запросу ничего не найдено')
-        return None
+        return 'По вашему запросу ничего не найдено'
+
+    reader = csv.reader(open(filename), delimiter=";")
+    rows_list = list(reader)
     rows_list.remove([*ans[0].values()])
 
-    row = input('Пожалуйста, введите измененные данные')
-    row = [items.split(': ')[1] for items in row.split('; ')]
-    rows_list.append(row)
+    rows_list.append(new_data)
     sortedlist = sorted(rows_list, key=itemgetter(0))
     sortedlist.remove(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
 
-    writer = csv.writer(open('client_data.csv', mode='w'), delimiter=';')
+    writer = csv.writer(open(filename, mode='w'), delimiter=';')
     writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
     [writer.writerow(i) for i in sortedlist]
+    return 'Изменения успешно применены'

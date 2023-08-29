@@ -9,7 +9,7 @@ if there are several pairs, they should be separated by a ';' sign. returns a li
 
     key = input()
     while ':' not in key:
-        key = input('Пожалуйста, введите запись в соответствии с образцом')
+        key = input('Пожалуйста, введите запись в соответствии с образцом ')
     keys, values = [], []
     if ';' not in key:
         key, value = key.split(': ')
@@ -37,7 +37,7 @@ def asking_for_valid_keys() -> tuple:
     keys, values = get_keys_from_input()
     while not are_keys_valid(keys):
         print('''Проверьте корректность полей введенных данных и введите их снова 
-    ("ФИО", "название организации", "рабочий телефон", "сотовый телефон")''')
+    ("ФИО", "название организации", "рабочий телефон", "сотовый телефон") ''')
 
         keys, values = get_keys_from_input()
     return keys, values
@@ -68,11 +68,17 @@ def phone_book(command, filename) -> None:
             while ans == '+':
                 [print(i) for i in model.data_to_display(page, filename)]
                 page += 1
-                ans = input('Введите "+" если хотите увидеть еще одну страницу')
+                ans = input('Введите "+" если хотите увидеть еще одну страницу ')
+
         if command == '3':
-            model.edit_row()
+            data_to_search = asking_for_valid_keys()
+            print('Теперь введите новые данные')
+            new_data = validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" '))
+            print(model.edit_row(data_to_search, new_data, filename))
+
         if command == '4':
-            model.ask_for_key(asking_for_valid_keys())
+            rows = model.correct_finding_output(asking_for_valid_keys(), filename)
+            [print(i) for i in rows]
 
     elif type(command) is tuple:
         command, input_data = command
