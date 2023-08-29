@@ -5,8 +5,11 @@ import csv
 
 def is_file_exists(filename: str) -> bool:
     """take filename as an argument and check if it exists in current directory"""
-    dir_path: str = os.path.dirname(os.path.realpath(__file__))
-    return os.path.exists(dir_path + f'/{filename}')
+    if not os.path.isabs(filename):
+        dir_path: str = os.path.dirname(os.path.realpath(__file__))
+        return os.path.exists(dir_path + f'/{filename}')
+    else:
+        return os.path.exists(filename)
 
 
 def test_create_data(test_filename: str) -> None:

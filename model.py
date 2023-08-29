@@ -2,73 +2,34 @@ import csv
 from operator import itemgetter
 
 
-def display_data() -> None:
+def data_to_display(page: int, filepath: str) -> list:
     """outputs the first 10 records from the 'client_data.csv' file, and requests the output of the next 10.
 if there are not enough records, informs the user about it and stops working"""
-    with open('client_data.csv', 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file, delimiter=';')
+    with open(filepath, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file, delimiter=';')
+        rows = []
+        list_of_rows = list(reader)[1+page * 10:]
+        if not list_of_rows:
+            return ['Записей больше нет']
         counter = 0
-        for row in reader:
+        for row in list_of_rows:
+            rows.append(f"ФИО: {row[0]}, название организации: {row[1]}, 'рабочий телефон': {row[2]}, 'сотовый телефон': {row[3]}")
             counter += 1
-            print(f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, 'рабочий телефон': {row['рабочий телефон']}, 'сотовый телефон': {row['сотовый телефон']}")
-
-            if counter % 10 == 0:
-                ans = input('Хотите вывести еще одну страницу? ("+" - Да, "-" - нет)')
-                while ans not in ['+', '-']:
-                    ans = input('Введите "+" если хотите увидеть еще одну страницу и "-" если хотите прекратить просмотр')
-                if ans == '-':
-                    break
+            if counter == 10:
+                break
         else:
-            print('Записей больше нет')
+            rows.append('Записей больше нет')
+        return rows
 
 
-def get_keys_from_input() -> tuple:
-    """accepts a string containing key-value pairs separated by a colon.
-if there are several pairs, they should be separated by a ';' sign. returns a list of keys and a list of values"""
-
-    key = input()
-    while ':' not in key:
-        key = input('Пожалуйста, введите запись в соответствии с образцом')
-    keys, values = [], []
-    if ';' not in key:
-        key, value = key.split(': ')
-        keys.append(key)
-        values.append(value)
-    else:
-        for items in key.split('; '):
-            key, value = items.split(': ')
-            keys.append(key)
-            values.append(value)
-    return keys, values
-
-
-def are_keys_valid(keys: list) -> bool:
-    """accepts a list of keys and checks them against the contained list of headers of the csv file 'client_data.csv'.
-returns False if it finds a mismatch"""
-    for key in keys:
-        if key not in ("ФИО", "название организации", "рабочий телефон", "сотовый телефон"):
-            return False
-    return True
-
-
-def asking_for_valid_keys() -> tuple:
-    """contains a function that returns lists of keys and values from the input.
-requests re-entry if there is an error in the keys"""
-    keys, values = get_keys_from_input()
-    while not are_keys_valid(keys):
-        print('''Проверьте корректность полей введенных данных и введите их снова 
-    ("ФИО", "название организации", "рабочий телефон", "сотовый телефон")''')
-
-        keys, values = get_keys_from_input()
-    return keys, values
-
-
-def find_rows(keys: list, values: list) -> list:
+def find_rows(keys: list, values: list, filepath: str) -> list:
     """accepts a list of keys and a list of values and
 returns all the corresponding strings from the 'client_data.csv' file"""
-    with open('client_data.csv', 'r', encoding='utf-8') as file:
+    with open(filepath, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file, delimiter=';')
         ans = []
+        if not keys or not values:
+            return []
         for row in reader:
             all_match = []
             for idx in range(len(keys)):
@@ -78,23 +39,21 @@ returns all the corresponding strings from the 'client_data.csv' file"""
         return ans
 
 
-def ask_for_key() -> None:
-    """requests a string containing key-value pairs from the user.
-divides it into a list of keys and a list of values, checks their correctness and searches for the corresponding record.
-If records are found, it outputs them. otherwise, notifies the user about the absence of relevant records"""
-    keys, values = asking_for_valid_keys()
-    ans = [f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, рабочий телефон: {row['рабочий телефон']}, сотовый телефон: {row['сотовый телефон']}" for row in find_rows(keys, values)]
-    if ans:
-        print(*ans, sep='\n')
+def ask_for_key(data_to_search: tuple) -> list:
+
+    keys, values = data_to_search
+    ans = [f"ФИО: {row['ФИО']}, название организации: {row['название организации']}, рабочий телефон: {row['рабочий телефон']}, сотовый телефон: {row['сотовый телефон']}" for row in find_rows(keys, values, 'client_data.csv')]
+    if not ans:
+        return ['По вашему запросу ничего не найдено']
     else:
-        print('По вашему запросу ничего не найдено')
+        return ans
 
 
-def edit_row() -> None:
+def edit_row(data_to_search: tuple) -> None:
     """accepts a row, finds it in the 'client_data.csv' file and overwrites it to the row that the user enters.
 after that, it sorts the file."""
-    keys, values = asking_for_valid_keys()
-    ans = find_rows(keys, values)
+    keys, values = data_to_search
+    ans = find_rows(keys, values, 'client_data.csv')
 
     reader = csv.reader(open('client_data.csv'), delimiter=";")
     rows_list = list(reader)
