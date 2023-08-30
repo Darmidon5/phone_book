@@ -2,6 +2,34 @@ import csv
 from operator import itemgetter
 
 
+class PhoneBookRepository:
+
+    def __init__(self, filename, headers, delimiter, encoding='utf-8'):
+        self.filename = filename
+        self.headers = headers
+        self.delimiter = delimiter
+        self.encoding = encoding
+
+    def read_csv(self) -> list:
+        with open(self.filename, encoding=self.encoding) as file:
+            reader = csv.reader(file, delimiter=self.delimiter)
+            return list(reader)
+
+    def read_dict_csv(self) -> list:
+        dict_reader = csv.DictReader(self.file, delimiter=self.delimiter)
+        return list(dict_reader)
+
+    def add_row(self, row: str) -> None:
+        with open(self.filename, mode='a', encoding=self.encoding) as file:
+            writer = csv.writer(file, delimiter=';')
+            writer.writerow(row)
+
+
+
+
+
+
+
 def data_to_display(page: int, filepath: str) -> list:
     """outputs the first 10 records from the 'client_data.csv' file, and requests the output of the next 10.
 if there are not enough records, informs the user about it and stops working"""

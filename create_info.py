@@ -32,9 +32,7 @@ def create_book(filepath: str) -> None:
             writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
 
 
-def add_row_to_file(row: list, filepath: str) -> None:
+def add_row_to_file(row: list, filepath: str, book) -> None:
     """write a new row to csv file"""
-    with open(filepath, mode='a', encoding='utf-8') as file:
-        writer = csv.writer(file, delimiter=';')
-        writer.writerow(row)
+    book.add_row(row)
     sort_csv_file_by_column(filepath)

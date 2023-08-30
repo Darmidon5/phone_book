@@ -58,7 +58,7 @@ def validate_row(row: str) -> list:
     return row
 
 
-def phone_book(command, filename) -> None:
+def phone_book(command, filename, phone_book) -> None:
     """request a command from the user and call the function necessary to execute it"""
     if type(command) is str:
         if command == '1':
@@ -84,15 +84,17 @@ def phone_book(command, filename) -> None:
         if command == '2':
             row = input_data
             valid_row = validate_row(row)
-            create_info.add_row_to_file(valid_row, filename)
+            create_info.add_row_to_file(valid_row, filename, phone_book)
 
 
 if __name__ == '__main__':
+    clients_data = model.PhoneBookRepository('client_data.csv',
+                                       ['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'], ';')
     phone_book_name: str = 'client_data.csv'
     create_info.create_book(phone_book_name)
     try:
         while True:
             user_command = view.interaction()
-            phone_book(user_command, phone_book_name)
+            phone_book(user_command, phone_book_name, clients_data)
     except KeyboardInterrupt:
         print('Спасибо, что выбрали нас!')

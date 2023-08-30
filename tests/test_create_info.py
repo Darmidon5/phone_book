@@ -51,10 +51,10 @@ def test_sort_csv_file_by_column(test_filename: str) -> None:
     assert not is_file_exists(test_filename)
 
 
-def test_add_row_to_file(test_filename: str) -> None:
+def test_add_row_to_file(test_filename: str, test_phone_book) -> None:
     file = open(test_filename, 'w', encoding='utf-8')
     test_data: list = ['name', 'organization', 'phone1', 'phone2']
-    add_row_to_file(test_data, test_filename)
+    add_row_to_file(test_data, test_filename, test_phone_book)
 
     reader = csv.reader(open(test_filename), delimiter=";")
     list_for_test = list(reader)

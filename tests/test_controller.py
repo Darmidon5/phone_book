@@ -8,10 +8,10 @@ def test_validate_row() -> None:
     assert validate_row(row) == ['name', 'organization', 'phone1', 'phone2']
 
 
-def test_phone_book_2(test_filename: str) -> None:
+def test_phone_book_2(test_filename: str, test_phone_book) -> None:
     file = open(test_filename, 'w', encoding='utf-8')
 
-    phone_book(('2', 'name; organization; phone1; phone2'), f'{test_filename}')
+    phone_book(('2', 'name; organization; phone1; phone2'), f'{test_filename}', test_phone_book)
 
     reader = csv.reader(open(test_filename), delimiter=";")
 
