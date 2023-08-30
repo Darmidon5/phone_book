@@ -57,24 +57,24 @@ def test_correct_finding_output(test_sorted_phone_book) -> None:
     assert len(result) == 26
 
 
-def test_edit_row(test_phone_book, test_sorted_phone_book) -> None:
+def test_edit_row(test_phone_book) -> None:
     test_phone_book.clean_book(add_headers=True)
 
     test_data = [[i, 1, 2, 3] for i in 'abc']
-    [test_sorted_phone_book.add_row(row) for row in test_data]
+    [test_phone_book.add_row(row) for row in test_data]
 
     empty_test_data = ([], [])
-    assert model.edit_row(empty_test_data, [], test_sorted_phone_book) == 'По вашему запросу ничего не найдено'
+    assert model.edit_row(empty_test_data, [], test_phone_book) == 'По вашему запросу ничего не найдено'
 
-    all_match_test_data = ([test_sorted_phone_book.headers[1]], [1])
-    assert model.edit_row(all_match_test_data, [], test_sorted_phone_book) == 'По вашему запросу найдено больше одной записи, редактирование невозможно'
+    all_match_test_data = ([test_phone_book.headers[1]], ['1'])
+    assert model.edit_row(all_match_test_data, [], test_phone_book) == 'По вашему запросу найдено больше одной записи, редактирование невозможно'
 
     data_to_edit = (['ФИО'], ['a'])
     new_data = ['a', '2', '2', '2']
-    ans = model.edit_row(data_to_edit, new_data, test_sorted_phone_book)
+    ans = model.edit_row(data_to_edit, new_data, test_phone_book)
     assert ans == 'Изменения успешно применены'
 
-    book_data = test_sorted_phone_book.read_csv()
+    book_data = test_phone_book.read_csv()
     assert new_data in book_data
     assert ['a', '1', '2', '3'] not in book_data
-    os.remove(test_sorted_phone_book.filename)
+    os.remove(test_phone_book.filename)

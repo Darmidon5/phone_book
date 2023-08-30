@@ -89,9 +89,14 @@ after that, it sorts the file."""
         return 'По вашему запросу найдено больше одной записи, редактирование невозможно'
 
     list_of_dicts: list = phone_book.read_dict_csv()
-    row_idx = list_of_dicts.index(ans)
-    list_of_dicts[row_idx] = new_data
+    row_idx = list_of_dicts.index(*ans)
+    valid_new_data = dict()
+    for idx in range(len(phone_book.headers)):
+        valid_new_data[phone_book.headers[idx]] = new_data[idx]
+
+    list_of_dicts[row_idx] = valid_new_data
 
     phone_book.clean_book(add_headers=True)
+    print(list_of_dicts)
     [phone_book.add_dict_row(row) for row in list_of_dicts]
     return 'Изменения успешно применены'

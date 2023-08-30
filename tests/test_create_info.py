@@ -32,10 +32,10 @@ def create_messed_csv(filename: str) -> None:
             writer.writerow([i, 1, 1, 1])
 
 
-def test_sort_csv_file_by_column(test_filename: str, test_phone_book) -> None:
+def test_sort_csv_file_by_column(test_filename, test_sorted_phone_book, test_phone_book) -> None:
     create_messed_csv(test_filename)
 
-    sorted_rows = list(csv.reader(open('sorted_csv', 'r', encoding='utf-8'), delimiter=';'))
+    sorted_rows = list(test_sorted_phone_book.read_csv())
 
     sort_csv_file_by_column(test_phone_book)
     test_reader = test_phone_book.read_csv()
