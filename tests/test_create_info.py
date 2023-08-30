@@ -10,16 +10,16 @@ def test_is_book_exists() -> None:
     assert is_book_exists('tests/test_creating_fake_data.py')
 
 
-def test_create_book(test_filename: str) -> None:
-    create_book(test_filename)
-    assert is_file_exists(test_filename)
+def test_create_book(test_phone_book) -> None:
+    create_book(test_phone_book)
+    assert is_file_exists(test_phone_book.filename)
 
-    reader = csv.reader(open(test_filename), delimiter=";")
-    row_count: int = sum(1 for row in reader)
+    list_of_rows = test_phone_book.read_csv()
+    row_count: int = len(list_of_rows)
     assert row_count == 1
 
-    os.remove(test_filename)
-    assert not is_file_exists(test_filename)
+    os.remove(test_phone_book.filename)
+    assert not is_file_exists(test_phone_book.filename)
 
 
 def create_messed_csv(filename: str) -> None:
@@ -32,19 +32,17 @@ def create_messed_csv(filename: str) -> None:
             writer.writerow([i, 1, 1, 1])
 
 
-def test_sort_csv_file_by_column(test_filename: str) -> None:
+def test_sort_csv_file_by_column(test_filename: str, test_phone_book) -> None:
     create_messed_csv(test_filename)
 
-    sorted_rows = open('sorted_csv', 'r', encoding='utf-8').readlines()
+    sorted_rows = list(csv.reader(open('sorted_csv', 'r', encoding='utf-8'), delimiter=';'))
 
-    sort_csv_file_by_column(test_filename)
-    test_reader = open(test_filename, 'r', encoding='utf-8').readlines()
+    sort_csv_file_by_column(test_phone_book)
+    test_reader = test_phone_book.read_csv()
 
-    counter = 0
     all_match = []
-    for row in sorted_rows:
-        all_match.append(row == test_reader[counter])
-        counter += 1
+    for idx in range(len(sorted_rows)):
+        all_match.append(sorted_rows[idx] == test_reader[idx])
     assert all(all_match)
 
     os.remove(test_filename)
@@ -54,11 +52,12 @@ def test_sort_csv_file_by_column(test_filename: str) -> None:
 def test_add_row_to_file(test_filename: str, test_phone_book) -> None:
     file = open(test_filename, 'w', encoding='utf-8')
     test_data: list = ['name', 'organization', 'phone1', 'phone2']
-    add_row_to_file(test_data, test_filename, test_phone_book)
+    add_row_to_file(test_data, test_phone_book)
 
     reader = csv.reader(open(test_filename), delimiter=";")
     list_for_test = list(reader)
 
     assert len(list_for_test) == 1
     assert test_data in list_for_test
+
     os.remove(test_filename)

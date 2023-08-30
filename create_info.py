@@ -2,20 +2,16 @@ import csv
 import os
 
 
-def sort_csv_file_by_column(filepath: str) -> None:
-    """sort the csv file by reading it, sorting the list of lines by column_number and overwriting it
-    takes 3 arguments: filename - name of file in the same directory that must be sorted,
-    column_number - the number of the column to sort by,
-    headers - headers of the csv file"""
-    headers: list = ['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон']
-    reader = csv.reader(open(filepath, encoding='utf-8'), delimiter=";")
-    sortedlist = sorted(reader, key=lambda row: row[0])
+def sort_csv_file_by_column(phone_book) -> None:
+    sortedlist = sorted(phone_book.read_csv(), key=lambda row: row[0])
 
-    writer = csv.writer(open(filepath, mode='w', encoding='utf-8'), delimiter=';')
-    if headers in sortedlist:
-        sortedlist.remove(headers)
-        writer.writerow(headers)
-    [writer.writerow(i) for i in sortedlist]
+    if phone_book.headers in sortedlist:
+        sortedlist.remove(phone_book.headers)
+        phone_book.clean_book(add_headers=True)
+    else:
+        phone_book.clean_book()
+
+    [phone_book.add_row(i) for i in sortedlist]
 
 
 def is_book_exists(filepath: str) -> bool:
@@ -24,15 +20,13 @@ def is_book_exists(filepath: str) -> bool:
     return os.path.exists(dir_path + f'/{filepath}')
 
 
-def create_book(filepath: str) -> None:
+def create_book(phonebook) -> None:
     """take filename as an argument and create a csv with this filename if it doesn't exist in current directory"""
-    if not is_book_exists(filepath):
-        with open(filepath, mode='w', encoding='utf-8') as file:
-            writer = csv.writer(file, delimiter=';')
-            writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])
+    if not is_book_exists(phonebook.filename):
+        phonebook.clean_book(add_headers=True)
 
 
-def add_row_to_file(row: list, filepath: str, book) -> None:
+def add_row_to_file(row: list, phone_book) -> None:
     """write a new row to csv file"""
-    book.add_row(row)
-    sort_csv_file_by_column(filepath)
+    phone_book.add_row(row)
+    sort_csv_file_by_column(phone_book)

@@ -24,11 +24,11 @@ class PhoneBookRepository:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(row)
 
-
-
-
-
-
+    def clean_book(self, add_headers=False):
+        with open(self.filename, mode='w', encoding=self.encoding) as file:
+            writer = csv.writer(file, delimiter=';')
+            if add_headers:
+                writer.writerow(self.headers)
 
 def data_to_display(page: int, filepath: str) -> list:
     """outputs the first 10 records from the 'client_data.csv' file, and requests the output of the next 10.

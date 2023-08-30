@@ -84,7 +84,7 @@ def phone_book(command, filename, phone_book) -> None:
         if command == '2':
             row = input_data
             valid_row = validate_row(row)
-            create_info.add_row_to_file(valid_row, filename, phone_book)
+            create_info.add_row_to_file(valid_row, phone_book)
 
 
 if __name__ == '__main__':
