@@ -65,7 +65,7 @@ def phone_book(command, filename, phone_book) -> None:
             ans = '+'
             page = 0
             while ans == '+':
-                [print(i) for i in model.data_to_display(page, filename)]
+                [print(i) for i in model.data_to_display(page, phone_book)]
                 page += 1
                 ans = input('Введите "+" если хотите увидеть еще одну страницу ')
 
@@ -73,10 +73,10 @@ def phone_book(command, filename, phone_book) -> None:
             data_to_search = asking_for_valid_keys()
             print('Теперь введите новые данные')
             new_data = validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" '))
-            print(model.edit_row(data_to_search, new_data, filename))
+            print(model.edit_row(data_to_search, new_data, phone_book))
 
         if command == '4':
-            rows = model.correct_finding_output(asking_for_valid_keys(), filename)
+            rows = model.correct_finding_output(asking_for_valid_keys(), phone_book)
             [print(i) for i in rows]
 
     elif type(command) is tuple:
