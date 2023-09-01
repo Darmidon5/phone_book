@@ -42,6 +42,7 @@ def asking_for_valid_keys() -> tuple:
         keys, values = get_keys_from_input()
     return keys, values
 
+
 def validate_row_delimiter(row: str) -> str:
     while ';' not in row:
         row = input('пожалуйста, введите данные еще раз, разделив их знаком ";" ')
@@ -84,14 +85,14 @@ def phone_book(command, filename, phone_book) -> None:
         if command == '2':
             row = input_data
             valid_row = validate_row(row)
-            create_info.add_row_to_file(valid_row, phone_book)
+            create_info.add_row_to_file(model.PhoneBookRecord(*valid_row), phone_book)
 
 
 if __name__ == '__main__':
     clients_data = model.PhoneBookRepository('client_data.csv',
                                        ['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'], ';')
     phone_book_name: str = 'client_data.csv'
-    create_info.create_book(phone_book_name)
+    create_info.create_book(clients_data)
     try:
         while True:
             user_command = view.interaction()
