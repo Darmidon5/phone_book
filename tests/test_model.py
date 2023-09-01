@@ -18,22 +18,18 @@ def test_data_to_display(test_sorted_phone_book) -> None:
 
 def test_find_rows(test_sorted_phone_book) -> None:
     empty_test_data = ([], [])
-    keys, values = empty_test_data
-    assert model.find_rows(keys, values, test_sorted_phone_book) == []
+    assert model.find_rows(empty_test_data, test_sorted_phone_book) == []
 
     full_test_data = (['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'], ['a', '1', '1', '1'])
-    keys, values = full_test_data
-    result = model.find_rows(keys, values, test_sorted_phone_book)
+    result = model.find_rows(full_test_data, test_sorted_phone_book)
     assert result[0]._aslist()[0] == 'a'
 
     one_key_test_data = (['ФИО'], ['a'])
-    keys, values = one_key_test_data
-    result = model.find_rows(keys, values, test_sorted_phone_book)
+    result = model.find_rows(one_key_test_data, test_sorted_phone_book)
     assert result[0]._aslist()[0] == 'a'
 
     all_match_test_data = (['название организации'], ['1'])
-    keys, values = all_match_test_data
-    result = model.find_rows(keys, values, test_sorted_phone_book)
+    result = model.find_rows(all_match_test_data, test_sorted_phone_book)
     assert len(result) == 26
 
 
@@ -63,17 +59,18 @@ def test_edit_row(test_phone_book) -> None:
     [test_phone_book.add_row(row) for row in test_data]
 
     empty_test_data = ([], [])
-    assert model.edit_row(empty_test_data, [], test_phone_book) == 'По вашему запросу ничего не найдено'
+    new_data = model.PhoneBookRecord()
+    assert model.edit_row(empty_test_data, new_data, test_phone_book) == 'По вашему запросу ничего не найдено'
 
     all_match_test_data = ([test_phone_book.headers[1]], ['1'])
-    assert model.edit_row(all_match_test_data, [], test_phone_book) == 'По вашему запросу найдено больше одной записи, редактирование невозможно'
+    assert model.edit_row(all_match_test_data, new_data, test_phone_book) == 'По вашему запросу найдено больше одной записи, редактирование невозможно'
 
     data_to_edit = (['ФИО'], ['a'])
-    new_data = ['a', '2', '2', '2']
+    new_data = model.PhoneBookRecord('a', '2', '2', '2')
     ans = model.edit_row(data_to_edit, new_data, test_phone_book)
     assert ans == 'Изменения успешно применены'
 
-    book_data = map(lambda row: row._aslist(), test_phone_book.read_csv())
+    book_data = test_phone_book.read_csv()
     assert new_data in book_data
     assert ['a', '1', '2', '3'] not in book_data
     os.remove(test_phone_book.filename)

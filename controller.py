@@ -1,15 +1,17 @@
 import view
 import create_info
 import model
+from model import PhoneBookRepository, PhoneBookRecord
+from typing import List, NoReturn
 
 
 def get_keys_from_input() -> tuple:
     """accepts a string containing key-value pairs separated by a colon.
 if there are several pairs, they should be separated by a ';' sign. returns a list of keys and a list of values"""
 
-    key = input()
+    key: str = input()
     while ':' not in key:
-        key = input('Пожалуйста, введите запись в соответствии с образцом ')
+        key: str = input('Пожалуйста, введите запись в соответствии с образцом ')
     keys, values = [], []
     if ';' not in key:
         key, value = key.split(': ')
@@ -49,53 +51,52 @@ def validate_row_delimiter(row: str) -> str:
     return row
 
 
-def validate_row(row: str) -> list:
+def validate_row(row: str) -> List[str]:
     validate_row_delimiter(row)
-    row = row.split('; ')
-    while len(row) < 4:
-        row = input('пожалуйста, введите данные еще раз, заполнив все 4 колонки и разделив их знаком ";" ')
+    valid_row: List[str] = row.split('; ')
+    while len(valid_row) < 4:
+        row: str = input('пожалуйста, введите данные еще раз, заполнив все 4 колонки и разделив их знаком ";" ')
         validate_row_delimiter(row)
-        row = row.split('; ')
-    return row
+        valid_row: List[str] = row.split('; ')
+    return valid_row
 
 
-def phone_book(command, filename, phone_book) -> None:
+def phone_book(command, phone_book: PhoneBookRepository) -> NoReturn:
     """request a command from the user and call the function necessary to execute it"""
     if type(command) is str:
         if command == '1':
-            ans = '+'
-            page = 0
+            ans: str = '+'
+            page: int = 0
             while ans == '+':
                 [print(i) for i in model.data_to_display(page, phone_book)]
                 page += 1
                 ans = input('Введите "+" если хотите увидеть еще одну страницу ')
 
         if command == '3':
-            data_to_search = asking_for_valid_keys()
+            data_to_search: tuple = asking_for_valid_keys()
             print('Теперь введите новые данные')
-            new_data = validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" '))
+            new_data: PhoneBookRecord = PhoneBookRecord(*validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" ')))
             print(model.edit_row(data_to_search, new_data, phone_book))
 
         if command == '4':
-            rows = model.correct_finding_output(asking_for_valid_keys(), phone_book)
+            rows: List[str] = model.correct_finding_output(asking_for_valid_keys(), phone_book)
             [print(i) for i in rows]
 
     elif type(command) is tuple:
         command, input_data = command
         if command == '2':
-            row = input_data
-            valid_row = validate_row(row)
-            create_info.add_row_to_file(model.PhoneBookRecord(*valid_row), phone_book)
+            row: str = input_data
+            valid_row: PhoneBookRecord = PhoneBookRecord(*validate_row(row))
+            create_info.add_row_to_file(valid_row, phone_book)
 
 
 if __name__ == '__main__':
-    clients_data = model.PhoneBookRepository('client_data.csv',
+    clients_data: PhoneBookRepository = model.PhoneBookRepository('client_data.csv',
                                        ['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'], ';')
-    phone_book_name: str = 'client_data.csv'
     create_info.create_book(clients_data)
     try:
         while True:
             user_command = view.interaction()
-            phone_book(user_command, phone_book_name, clients_data)
+            phone_book(user_command, clients_data)
     except KeyboardInterrupt:
         print('Спасибо, что выбрали нас!')

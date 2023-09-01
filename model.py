@@ -7,10 +7,10 @@ import _csv
 
 @dataclass
 class PhoneBookRecord:
-    full_name: str
-    organization: str
-    phone1: str
-    prone2: str
+    full_name: str = ''
+    organization: str = ''
+    phone1: str = ''
+    prone2: str = ''
 
     def _aslist(self) -> list:
         data_dict: dict = vars(self)
@@ -30,6 +30,7 @@ class PhoneBookRepository:
         self.encoding = encoding
 
     def read_csv(self) -> list:
+        """open self.filename file and return list of its rows as PhoneBookRecord objects"""
         with open(self.filename, encoding=self.encoding) as file:
             reader: list = list(csv.reader(file, delimiter=self.delimiter))
             if self.headers in reader:
@@ -38,26 +39,32 @@ class PhoneBookRepository:
             return output
 
     def add_row(self, row: PhoneBookRecord) -> NoReturn:
+        """take PhoneBookRecord as an argument and ads it to self.filename file"""
         with open(self.filename, mode='a', encoding=self.encoding) as file:
             writer: _csv.writer = csv.writer(file, delimiter=';')
             writer.writerow(row._aslist())
 
-    def clean_book(self, add_headers=False):
+    def clean_book(self, add_headers=False) -> NoReturn:
+        """remove all the rows from self.filename file.
+        Will add self.headers to a file if add_headers argument is True"""
         with open(self.filename, mode='w', encoding=self.encoding) as file:
-            writer = csv.writer(file, delimiter=';')
+            writer: _csv.writer = csv.writer(file, delimiter=';')
             if add_headers:
                 writer.writerow(self.headers)
 
 
-def data_to_display(page: int, phone_book: PhoneBookRepository) -> list:
-    rows = []
-    list_of_rows = phone_book.read_csv()[page * 10:]
+def data_to_display(page: int, phone_book: PhoneBookRepository) -> List[str]:
+    """get 10 rows from phone book according to their page. will return 'Записей больше нет' as final row
+    takes two arguments:
+    page - shows the sequence number of a group of ten records extracted from the file
+    phone_book - an object of PhoneBookRepository class"""
+    rows: list = []
+    list_of_rows: List[PhoneBookRecord] = phone_book.read_csv()[page * 10:]
     if not list_of_rows:
         return ['Записей больше нет']
-    list_of_rows = map(lambda x: x._aslist(), list_of_rows)
-    counter = 0
+    counter: int = 0
     for row in list_of_rows:
-        rows.append(f"ФИО: {row[0]}, название организации: {row[1]}, 'рабочий телефон': {row[2]}, 'сотовый телефон': {row[3]}")
+        rows.append(row._asstr(phone_book.headers))
         counter += 1
         if counter == 10:
             break
@@ -66,12 +73,11 @@ def data_to_display(page: int, phone_book: PhoneBookRepository) -> list:
     return rows
 
 
-def find_rows(keys: list, values: list, phone_book: PhoneBookRepository) -> list:
-    """accepts a list of keys and a list of values and
-returns all the corresponding strings from the 'client_data.csv' file"""
-    keys = [phone_book.headers.index(key) for key in keys]
-    list_of_recs = phone_book.read_csv()
-    ans = []
+def find_rows(data_to_search, phone_book: PhoneBookRepository) -> List[PhoneBookRecord]:
+    keys, values = data_to_search
+    keys: List[int] = [phone_book.headers.index(key) for key in keys]
+    list_of_recs: List[PhoneBookRecord] = phone_book.read_csv()
+    ans: List[PhoneBookRecord] = []
     if not keys or not values:
         return []
     for record in list_of_recs:
@@ -83,29 +89,30 @@ returns all the corresponding strings from the 'client_data.csv' file"""
     return ans
 
 
-def correct_finding_output(data_to_search: tuple, phone_book: PhoneBookRepository) -> list:
-    keys, values = data_to_search
-    ans = [row._asstr(phone_book.headers) for row in find_rows(keys, values, phone_book)]
+def correct_finding_output(data_to_search: tuple, phone_book: PhoneBookRepository) -> List[str]:
+    """get rows of a PhoneBookRepository matching as strings by keywords
+    takes 2 arguments:
+    data_to_search - tuple of to lists - keys and matching values to look for
+    phone_book - PhoneBookRepository object"""
+    ans: List[str] = [row._asstr(phone_book.headers) for row in find_rows(data_to_search, phone_book)]
     if not ans:
         return ['По вашему запросу ничего не найдено']
     else:
         return ans
 
 
-def edit_row(data_to_search: tuple, new_data: list, phone_book: PhoneBookRepository) -> str:
-    """accepts a row, finds it in the 'client_data.csv' file and overwrites it to the row that the user enters.
-after that, it sorts the file."""
-    keys, values = data_to_search
-    ans = find_rows(keys, values, phone_book)
+def edit_row(data_to_search: tuple, new_data: PhoneBookRecord, phone_book: PhoneBookRepository) -> str:
+    """edit a row in PhoneBookRepository"""
+    ans: List[PhoneBookRecord] = find_rows(data_to_search, phone_book)
     if not ans:
         return 'По вашему запросу ничего не найдено'
 
     if len(ans) > 1:
         return 'По вашему запросу найдено больше одной записи, редактирование невозможно'
 
-    list_of_dicts: list = phone_book.read_csv()
-    row_idx = list_of_dicts.index(*ans)
-    list_of_dicts[row_idx] = PhoneBookRecord(*new_data)
+    list_of_dicts: List[PhoneBookRecord] = phone_book.read_csv()
+    row_idx: int = list_of_dicts.index(*ans)
+    list_of_dicts[row_idx] = new_data
 
     phone_book.clean_book(add_headers=True)
     [phone_book.add_row(row) for row in list_of_dicts]
