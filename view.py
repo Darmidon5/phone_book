@@ -1,7 +1,7 @@
 
 
 def interaction():
-    """request a comand from the user by asking him questions"""
+    """request a comand from the user"""
     action = ''
     while action not in ['1', '2', '3', '4']:
         action = input('''Введите команду:

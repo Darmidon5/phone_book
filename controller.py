@@ -6,9 +6,10 @@ from typing import List, NoReturn
 
 
 def get_keys_from_input() -> tuple:
-    """accepts a string containing key-value pairs separated by a colon.
-if there are several pairs, they should be separated by a ';' sign. returns a list of keys and a list of values"""
-
+    """request a string from the user, make sure that it matches the format
+    (<key>: <value>; <key>: <value>)
+    and divide it into two lists containing keys and values
+    return tuple, containing two lists"""
     key: str = input()
     while ':' not in key:
         key: str = input('Пожалуйста, введите запись в соответствии с образцом ')
@@ -25,44 +26,58 @@ if there are several pairs, they should be separated by a ';' sign. returns a li
     return keys, values
 
 
-def are_keys_valid(keys: list) -> bool:
-    """accepts a list of keys and checks them against the contained list of headers of the csv file 'client_data.csv'.
-returns False if it finds a mismatch"""
+def are_keys_valid(keys: list, phone_book: PhoneBookRepository) -> bool:
+    """check if the key list items match the headers of PhoneBookRepository
+    takes two arguments:
+    keys: list of keys to validate
+    phone_book: PhoneBookRepositoryObject
+    return True if all keys are valid"""
     for key in keys:
-        if key not in ("ФИО", "название организации", "рабочий телефон", "сотовый телефон"):
+        if key not in phone_book.headers:
             return False
     return True
 
 
-def asking_for_valid_keys() -> tuple:
-    """returns valid list of keys and list of values from input"""
+def asking_for_valid_keys(phone_book: PhoneBookRepository) -> tuple:
+    """request key-value pairs from user and validate them"""
     keys, values = get_keys_from_input()
-    while not are_keys_valid(keys):
-        print('''Проверьте корректность полей введенных данных и введите их снова 
-    ("ФИО", "название организации", "рабочий телефон", "сотовый телефон") ''')
+    while not are_keys_valid(keys, phone_book):
+        print(f'''Проверьте корректность полей введенных данных и введите их снова 
+    {tuple(phone_book.headers)} ''')
 
         keys, values = get_keys_from_input()
     return keys, values
 
 
 def validate_row_delimiter(row: str) -> str:
+    """request a row of key-values pairs from user until it contains ';' symbol"""
     while ';' not in row:
         row = input('пожалуйста, введите данные еще раз, разделив их знаком ";" ')
     return row
 
 
-def validate_row(row: str) -> List[str]:
+def validate_row(row: str, phone_book: PhoneBookRepository) -> PhoneBookRecord:
+    """validate a row. if it's not valid
+    requests a row of key-values pairs from user until it matches (<key>: <value>; <key>: <value>) format
+    and contains amount of key-value pairs, neccesary to write into PhoneBookRepository
+    takes two arguments:
+    row: string to validate
+    phone_book: PhoneBookRepository object
+    returns valid PhoneBookRecord object"""
     validate_row_delimiter(row)
     valid_row: List[str] = row.split('; ')
-    while len(valid_row) < 4:
-        row: str = input('пожалуйста, введите данные еще раз, заполнив все 4 колонки и разделив их знаком ";" ')
+    while len(valid_row) < len(phone_book.headers):
+        row: str = input(f'пожалуйста, введите данные еще раз, заполнив все колонки ({len(phone_book.headers)}) и разделив их знаком ";" ')
         validate_row_delimiter(row)
-        valid_row: List[str] = row.split('; ')
-    return valid_row
+        valid_row = row.split('; ')
+    return PhoneBookRecord(*valid_row)
 
 
 def phone_book(command, phone_book: PhoneBookRepository) -> NoReturn:
-    """request a command from the user and call the function necessary to execute it"""
+    """call the function necessary to execute the command
+    takes two arguments:
+    command: command to execute
+    phone_book: PhoneBookRepository object to work with"""
     if type(command) is str:
         if command == '1':
             ans: str = '+'
@@ -73,20 +88,19 @@ def phone_book(command, phone_book: PhoneBookRepository) -> NoReturn:
                 ans = input('Введите "+" если хотите увидеть еще одну страницу ')
 
         if command == '3':
-            data_to_search: tuple = asking_for_valid_keys()
+            data_to_search: tuple = asking_for_valid_keys(phone_book)
             print('Теперь введите новые данные')
-            new_data: PhoneBookRecord = PhoneBookRecord(*validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" ')))
+            new_data: PhoneBookRecord = validate_row(input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" '), phone_book)
             print(model.edit_row(data_to_search, new_data, phone_book))
 
         if command == '4':
-            rows: List[str] = model.correct_finding_output(asking_for_valid_keys(), phone_book)
+            rows: List[str] = model.correct_finding_output(asking_for_valid_keys(phone_book), phone_book)
             [print(i) for i in rows]
 
     elif type(command) is tuple:
         command, input_data = command
         if command == '2':
-            row: str = input_data
-            valid_row: PhoneBookRecord = PhoneBookRecord(*validate_row(row))
+            valid_row: PhoneBookRecord = validate_row(input_data, phone_book)
             create_info.add_row_to_file(valid_row, phone_book)
 
 

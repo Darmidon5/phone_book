@@ -1,24 +1,23 @@
 from controller import phone_book, validate_row
-import csv
 import os
+import model
 
 
-def test_validate_row() -> None:
+def test_validate_row(test_phone_book) -> None:
     row = 'name; organization; phone1; phone2'
-    assert validate_row(row) == ['name', 'organization', 'phone1', 'phone2']
+    assert validate_row(row, test_phone_book) == model.PhoneBookRecord('name', 'organization', 'phone1', 'phone2')
 
 
-def test_phone_book_2(test_filename: str, test_phone_book) -> None:
-    file = open(test_filename, 'w', encoding='utf-8')
+def test_phone_book_2(test_phone_book) -> None:
+    test_phone_book.clean_book()
 
     phone_book(('2', 'name; organization; phone1; phone2'), test_phone_book)
 
-    reader = csv.reader(open(test_filename), delimiter=";")
+    reader = test_phone_book.read_csv()
 
-    list_for_test = list(reader)
-    assert len(list_for_test) == 1
+    assert len(reader) == 1
 
-    test_data: list = ['name', 'organization', 'phone1', 'phone2']
-    assert test_data in list_for_test
+    test_data: model.PhoneBookRecord = model.PhoneBookRecord('name', 'organization', 'phone1', 'phone2')
+    assert test_data in reader
 
-    os.remove(test_filename)
+    os.remove(test_phone_book.filename)
