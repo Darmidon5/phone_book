@@ -5,8 +5,6 @@ import _csv
 
 
 def create_data(n: int, filepath: str) -> NoReturn:
-    """accepts a numeric argument and filename and creates a phonebook in the form of a csv file with the number of filled lines
-    equal to it"""
     with open(filepath, mode='w', encoding='utf-8') as file:
         writer: _csv.writer = csv.writer(file, delimiter=';')
         writer.writerow(['ФИО', 'название организации', 'рабочий телефон', 'сотовый телефон'])

@@ -6,10 +6,6 @@ from typing import List, NoReturn
 
 
 def get_keys_from_input() -> tuple:
-    """request a string from the user, make sure that it matches the format
-    (<key>: <value>; <key>: <value>)
-    and divide it into two lists containing keys and values
-    return tuple, containing two lists"""
     key: str = input()
     while ':' not in key:
         key: str = input('Пожалуйста, введите запись в соответствии с образцом ')
@@ -27,11 +23,6 @@ def get_keys_from_input() -> tuple:
 
 
 def are_keys_valid(keys: list, phone_book: PhoneBookRepository) -> bool:
-    """check if the key list items match the headers of PhoneBookRepository
-    takes two arguments:
-    keys: list of keys to validate
-    phone_book: PhoneBookRepositoryObject
-    return True if all keys are valid"""
     for key in keys:
         if key not in phone_book.headers:
             return False
@@ -39,7 +30,6 @@ def are_keys_valid(keys: list, phone_book: PhoneBookRepository) -> bool:
 
 
 def asking_for_valid_keys(phone_book: PhoneBookRepository) -> tuple:
-    """request key-value pairs from user and validate them"""
     keys, values = get_keys_from_input()
     while not are_keys_valid(keys, phone_book):
         print(f'''Проверьте корректность полей введенных данных и введите их снова 
@@ -50,20 +40,12 @@ def asking_for_valid_keys(phone_book: PhoneBookRepository) -> tuple:
 
 
 def validate_row_delimiter(row: str) -> str:
-    """request a row of key-values pairs from user until it contains ';' symbol"""
     while ';' not in row:
         row = input('пожалуйста, введите данные еще раз, разделив их знаком ";" ')
     return row
 
 
 def validate_row(row: str, phone_book: PhoneBookRepository) -> PhoneBookRecord:
-    """validate a row. if it's not valid
-    requests a row of key-values pairs from user until it matches (<key>: <value>; <key>: <value>) format
-    and contains amount of key-value pairs, neccesary to write into PhoneBookRepository
-    takes two arguments:
-    row: string to validate
-    phone_book: PhoneBookRepository object
-    returns valid PhoneBookRecord object"""
     validate_row_delimiter(row)
     valid_row: List[str] = row.split('; ')
     while len(valid_row) < len(phone_book.headers):
@@ -74,10 +56,6 @@ def validate_row(row: str, phone_book: PhoneBookRepository) -> PhoneBookRecord:
 
 
 def phone_book(command, phone_book: PhoneBookRepository) -> NoReturn:
-    """call the function necessary to execute the command
-    takes two arguments:
-    command: command to execute
-    phone_book: PhoneBookRepository object to work with"""
     if type(command) is str:
         if command == '1':
             ans: str = '+'
