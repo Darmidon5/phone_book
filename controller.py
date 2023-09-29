@@ -11,12 +11,12 @@ def get_keys_from_input() -> tuple:
         key: str = input('Пожалуйста, введите запись в соответствии с образцом ')
     keys, values = [], []
     if ';' not in key:
-        key, value = key.split(': ')
+        key, value = key.split(':')
         keys.append(key)
         values.append(value)
     else:
-        for items in key.split('; '):
-            key, value = items.split(': ')
+        for items in key.split(';'):
+            key, value = items.split(':')
             keys.append(key)
             values.append(value)
     return keys, values
@@ -47,11 +47,11 @@ def validate_row_delimiter(row: str) -> str:
 
 def validate_row(row: str, phone_book: PhoneBookRepository) -> PhoneBookRecord:
     validate_row_delimiter(row)
-    valid_row: List[str] = row.split('; ')
+    valid_row: List[str] = row.split(';')
     while len(valid_row) < len(phone_book.headers):
         row: str = input(f'пожалуйста, введите данные еще раз, заполнив все колонки ({len(phone_book.headers)}) и разделив их знаком ";" ')
         validate_row_delimiter(row)
-        valid_row = row.split('; ')
+        valid_row = row.split(';')
     return PhoneBookRecord(*valid_row)
 
 
