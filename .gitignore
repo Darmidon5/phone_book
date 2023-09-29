@@ -1,3 +1,6 @@
 *.csv
 .idea
 pycache
+.pytest_cashe
+client_data.csv
+tests/sorted_csv

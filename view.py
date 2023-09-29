@@ -1,7 +1,6 @@
 
 
 def interaction():
-    """request a comand from the user by asking him questions"""
     action = ''
     while action not in ['1', '2', '3', '4']:
         action = input('''Введите команду:
@@ -12,10 +11,11 @@ def interaction():
 ''')
 
     if action == '1':
+
         return action
 
     if action == '2':
-        text_input = input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";"')
+        text_input = input('Введите ФИО, название организации, рабочий телефон и сотовый телефон абонента, разделив их знаком ";" ')
         return action, text_input
 
     if action == '3':
